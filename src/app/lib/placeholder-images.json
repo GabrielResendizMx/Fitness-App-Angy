@@ -1,0 +1,41 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "hero-image",
+      "description": "Woman practicing yoga in a bright, soft-lit room",
+      "imageUrl": "https://picsum.photos/seed/aurafit-hero/1200/800",
+      "imageHint": "yoga stretching"
+    },
+    {
+      "id": "about-me",
+      "description": "Minimalist portrait of a professional fitness coach",
+      "imageUrl": "https://picsum.photos/seed/aurafit-coach/600/800",
+      "imageHint": "fitness coach"
+    },
+    {
+      "id": "result-1-before",
+      "description": "Fitness progress before photo",
+      "imageUrl": "https://picsum.photos/seed/result1-b/400/500",
+      "imageHint": "fitness transformation"
+    },
+    {
+      "id": "result-1-after",
+      "description": "Fitness progress after photo",
+      "imageUrl": "https://picsum.photos/seed/result1-a/400/500",
+      "imageHint": "fitness result"
+    },
+    {
+      "id": "result-2-before",
+      "description": "Fitness progress before photo 2",
+      "imageUrl": "https://picsum.photos/seed/result2-b/400/500",
+      "imageHint": "body transformation"
+    },
+    {
+      "id": "result-2-after",
+      "description": "Fitness progress after photo 2",
+      "imageUrl": "https://picsum.photos/seed/result2-a/400/500",
+      "imageHint": "body result"
+    }
+  ]
+}
