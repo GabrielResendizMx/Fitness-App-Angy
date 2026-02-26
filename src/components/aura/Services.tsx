@@ -5,42 +5,45 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Check, Heart, Zap, Sun } from "lucide-react"
-
-const packages = [
-  {
-    id: "essential",
-    title: "Aura Essentials",
-    description: "Para quienes buscan un reinicio consciente.",
-    price: "$49",
-    icon: <Sun className="w-8 h-8 text-primary" />,
-    features: ["Rutinas de 20 min", "Guía nutricional básica", "Soporte vía comunidad", "Meditaciones guiadas"]
-  },
-  {
-    id: "zen",
-    title: "Zen Flow",
-    description: "Equilibrio total entre fuerza y flexibilidad.",
-    price: "$89",
-    icon: <Heart className="w-8 h-8 text-primary" />,
-    features: ["Yoga & Pilates", "Plan de comidas personalizado", "Sesión 1:1 mensual", "Seguimiento de hidratación"],
-    popular: true
-  },
-  {
-    id: "radiant",
-    title: "Radiant Strength",
-    description: "Transformación profunda y personalizada.",
-    price: "$149",
-    icon: <Zap className="w-8 h-8 text-primary" />,
-    features: ["Entrenamiento de alta intensidad", "Análisis de bio-tipos", "Chat 24/7 con Aura", "Talleres de mentalidad"]
-  }
-]
+import { useTranslation } from "react-i18next"
 
 export function Services() {
+  const { t } = useTranslation()
+
+  const packages = [
+    {
+      id: "essential",
+      title: t('services.pkgs.essential.title'),
+      description: t('services.pkgs.essential.desc'),
+      price: "$49",
+      icon: <Sun className="w-8 h-8 text-primary" />,
+      features: t('services.pkgs.essential.f', { returnObjects: true }) as string[]
+    },
+    {
+      id: "zen",
+      title: t('services.pkgs.zen.title'),
+      description: t('services.pkgs.zen.desc'),
+      price: "$89",
+      icon: <Heart className="w-8 h-8 text-primary" />,
+      features: t('services.pkgs.zen.f', { returnObjects: true }) as string[],
+      popular: true
+    },
+    {
+      id: "radiant",
+      title: t('services.pkgs.radiant.title'),
+      description: t('services.pkgs.radiant.desc'),
+      price: "$149",
+      icon: <Zap className="w-8 h-8 text-primary" />,
+      features: t('services.pkgs.radiant.f', { returnObjects: true }) as string[]
+    }
+  ]
+
   return (
     <section id="services" className="py-24 bg-secondary/30">
       <div className="max-w-7xl mx-auto px-6 text-center space-y-4 mb-16">
-        <h2 className="text-4xl md:text-5xl font-bold">Nuestros Programas</h2>
+        <h2 className="text-4xl md:text-5xl font-bold">{t('services.title')}</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-          Elige el nivel que mejor resuene contigo y comienza tu transformación hoy.
+          {t('services.description')}
         </p>
       </div>
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
@@ -48,7 +51,7 @@ export function Services() {
           <Card key={pkg.id} className={`floating-card border-none bg-white rounded-[2rem] overflow-hidden ${pkg.popular ? 'ring-2 ring-primary shadow-2xl scale-105' : 'shadow-lg'}`}>
             {pkg.popular && (
               <div className="bg-primary text-white text-sm font-bold py-1 text-center uppercase tracking-widest">
-                Más Popular
+                {t('services.popular')}
               </div>
             )}
             <CardHeader className="text-center pt-10">
@@ -59,7 +62,7 @@ export function Services() {
             <CardContent className="space-y-6 px-8">
               <div className="text-center">
                 <span className="text-4xl font-bold text-foreground">{pkg.price}</span>
-                <span className="text-muted-foreground">/mes</span>
+                <span className="text-muted-foreground">{t('services.perMonth')}</span>
               </div>
               <ul className="space-y-4">
                 {pkg.features.map((feature, i) => (
@@ -72,7 +75,7 @@ export function Services() {
             </CardContent>
             <CardFooter className="pb-10 pt-6 justify-center">
               <Button asChild className="w-full max-w-[200px] rounded-full bg-primary hover:bg-primary/90 text-white py-6 soft-glow">
-                <Link href={`/register?pkg=${pkg.id}`}>Seleccionar</Link>
+                <Link href={`/register?pkg=${pkg.id}`}>{t('services.select')}</Link>
               </Button>
             </CardFooter>
           </Card>

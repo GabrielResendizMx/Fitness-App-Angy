@@ -1,10 +1,14 @@
 
+"use client"
+
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
+import { useTranslation } from "react-i18next"
 
 export function Hero() {
+  const { t } = useTranslation()
   const heroImg = PlaceHolderImages.find(img => img.id === "hero-image")
 
   return (
@@ -12,20 +16,20 @@ export function Hero() {
       <div className="absolute inset-0 z-0 opacity-20 bg-[#FFFDD0]"></div>
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
         <div className="space-y-8 animate-in fade-in slide-in-from-left duration-1000">
-          <p className="font-decorative text-3xl text-primary">Siente tu Aura</p>
+          <p className="font-decorative text-3xl text-primary">{t('hero.subtitle')}</p>
           <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-            Encuentra tu equilibrio <br />
-            <span className="text-primary italic">y brilla</span> con fuerza
+            {t('hero.title').split('brilla')[0]} <br />
+            <span className="text-primary italic">{t('hero.title').split('fuerza')[0].split('brilla')[1] || 'y brilla'}</span> {t('hero.title').split('brilla')[1]?.split('fuerza')[1] || 'con fuerza'}
           </h1>
           <p className="text-lg text-muted-foreground max-w-lg leading-relaxed">
-            Un enfoque holístico para transformar tu cuerpo y mente. Programas personalizados diseñados para tu bienestar integral.
+            {t('hero.description')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
             <Button asChild size="lg" className="rounded-full bg-primary hover:bg-primary/90 text-white px-10 py-7 text-lg soft-glow transition-all duration-300 hover:scale-105">
-              <Link href="#services">Explorar Programas</Link>
+              <Link href="#services">{t('hero.cta1')}</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="rounded-full border-primary text-primary hover:bg-primary/10 px-10 py-7 text-lg transition-all duration-300">
-              <Link href="#about">Saber más</Link>
+              <Link href="#about">{t('hero.cta2')}</Link>
             </Button>
           </div>
         </div>

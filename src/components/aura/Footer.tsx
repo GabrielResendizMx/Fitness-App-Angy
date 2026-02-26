@@ -1,8 +1,13 @@
 
+"use client"
+
 import { Sparkles, Instagram, Facebook, Twitter } from "lucide-react"
 import Link from "next/link"
+import { useTranslation } from "react-i18next"
 
 export function Footer() {
+  const { t } = useTranslation()
+
   return (
     <footer className="bg-background py-16 border-t border-border/50">
       <div className="max-w-7xl mx-auto px-6">
@@ -15,7 +20,7 @@ export function Footer() {
               <span className="font-headline text-2xl font-bold">Aura<span className="text-primary">Fit</span></span>
             </Link>
             <p className="text-muted-foreground max-w-sm">
-              Inspirando a las personas a vivir su mejor vida a través del movimiento consciente y el amor propio.
+              {t('footer.desc')}
             </p>
             <div className="flex gap-4">
               <Link href="#" className="p-2 bg-secondary rounded-full text-primary hover:bg-primary hover:text-white transition-all"><Instagram className="w-5 h-5" /></Link>
@@ -24,24 +29,24 @@ export function Footer() {
             </div>
           </div>
           <div className="space-y-6">
-            <h4 className="font-bold text-lg">Navegación</h4>
+            <h4 className="font-bold text-lg">{t('footer.navTitle')}</h4>
             <ul className="space-y-4 text-muted-foreground">
-              <li><Link href="#about" className="hover:text-primary transition-colors">Sobre mí</Link></li>
-              <li><Link href="#services" className="hover:text-primary transition-colors">Programas</Link></li>
-              <li><Link href="#results" className="hover:text-primary transition-colors">Resultados</Link></li>
+              <li><Link href="#about" className="hover:text-primary transition-colors">{t('nav.about')}</Link></li>
+              <li><Link href="#services" className="hover:text-primary transition-colors">{t('nav.services')}</Link></li>
+              <li><Link href="#results" className="hover:text-primary transition-colors">{t('nav.results')}</Link></li>
             </ul>
           </div>
           <div className="space-y-6">
-            <h4 className="font-bold text-lg">Soporte</h4>
+            <h4 className="font-bold text-lg">{t('footer.supportTitle')}</h4>
             <ul className="space-y-4 text-muted-foreground">
-              <li><Link href="#" className="hover:text-primary transition-colors">Contacto</Link></li>
-              <li><Link href="#" className="hover:text-primary transition-colors">Términos</Link></li>
-              <li><Link href="#" className="hover:text-primary transition-colors">Privacidad</Link></li>
+              <li><Link href="#" className="hover:text-primary transition-colors">{t('footer.contact')}</Link></li>
+              <li><Link href="#" className="hover:text-primary transition-colors">{t('footer.terms')}</Link></li>
+              <li><Link href="#" className="hover:text-primary transition-colors">{t('footer.privacy')}</Link></li>
             </ul>
           </div>
         </div>
         <div className="mt-16 pt-8 border-t border-border/50 text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} AuraFit Coaching. Todos los derechos reservados.
+          © {new Date().getFullYear()} AuraFit Coaching. {t('footer.rights')}
         </div>
       </div>
     </footer>

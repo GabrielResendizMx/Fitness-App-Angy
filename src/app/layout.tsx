@@ -1,11 +1,11 @@
 
+'use client';
+
 import type {Metadata} from 'next';
 import './globals.css';
-
-export const metadata: Metadata = {
-  title: 'AuraFit | Find Your Balance',
-  description: 'Holistic fitness and wellness coaching for a radiant life.',
-};
+import '@/i18n/config';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '@/i18n/config';
 
 export default function RootLayout({
   children,
@@ -18,8 +18,13 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=PT+Sans:wght@400;700&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet" />
+        <title>AuraFit | Find Your Balance</title>
       </head>
-      <body className="font-body antialiased bg-background">{children}</body>
+      <body className="font-body antialiased bg-background">
+        <I18nextProvider i18n={i18n}>
+          {children}
+        </I18nextProvider>
+      </body>
     </html>
   );
 }

@@ -1,8 +1,12 @@
 
+"use client"
+
 import Image from "next/image"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
+import { useTranslation } from "react-i18next"
 
 export function AboutMe() {
+  const { t } = useTranslation()
   const aboutImg = PlaceHolderImages.find(img => img.id === "about-me")
 
   return (
@@ -22,17 +26,13 @@ export function AboutMe() {
             </div>
           </div>
           <div className="space-y-6">
-            <h2 className="text-4xl md:text-5xl font-bold">Sobre Mí</h2>
-            <p className="font-decorative text-2xl text-primary">El camino hacia la plenitud</p>
+            <h2 className="text-4xl md:text-5xl font-bold">{t('about.title')}</h2>
+            <p className="font-decorative text-2xl text-primary">{t('about.subtitle')}</p>
             <div className="space-y-4 text-muted-foreground text-lg leading-relaxed">
-              <p>
-                Hola, soy Aura. Mi misión es acompañarte en tu viaje de transformación personal. No creo en las soluciones rápidas, sino en la construcción de hábitos sostenibles que respeten tu ritmo y tus necesidades.
-              </p>
-              <p>
-                Con más de 8 años de experiencia en fitness holístico y nutrición consciente, he ayudado a cientos de personas a reconectar con su vitalidad y confianza.
-              </p>
+              <p>{t('about.p1')}</p>
+              <p>{t('about.p2')}</p>
               <p className="font-bold text-foreground italic">
-                "Tu bienestar es la inversión más valiosa que puedes hacer en ti misma."
+                "{t('about.quote')}"
               </p>
             </div>
           </div>
