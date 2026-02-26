@@ -16,7 +16,7 @@ export function Navbar() {
           <div className="bg-primary p-2 rounded-full transition-transform duration-500 group-hover:rotate-12">
             <Sparkles className="w-5 h-5 text-white" />
           </div>
-          <span className="font-headline text-2xl font-bold text-foreground">Aura<span className="text-primary">Fit</span></span>
+          <span className="font-headline text-2xl font-bold text-foreground">She is <span className="text-primary">Fit</span></span>
         </Link>
         <div className="hidden md:flex items-center gap-6 font-medium text-muted-foreground">
           <Link href="#about" className="hover:text-primary transition-colors">{t('nav.about')}</Link>

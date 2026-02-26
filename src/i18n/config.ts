@@ -36,7 +36,7 @@ const resources = {
         perMonth: "/mes",
         pkgs: {
           essential: {
-            title: "Aura Essentials",
+            title: "She is Fit Essentials",
             desc: "Para quienes buscan un reinicio consciente.",
             f: ["Rutinas de 20 min", "Guía nutricional básica", "Soporte vía comunidad", "Meditaciones guiadas"]
           },
@@ -74,7 +74,7 @@ const resources = {
         submit: "Enviar Registro",
         disclaimer: "Al enviar, aceptas nuestros términos de servicio y política de privacidad.",
         success: "¡Solicitud recibida!",
-        successText: "Gracias por confiar en AuraFit. Revisaremos tus detalles y nos pondremos en contacto contigo en las próximas 24 horas para finalizar tu inscripción.",
+        successText: "Gracias por confiar en She is Fit. Revisaremos tus detalles y nos pondremos en contacto contigo en las próximas 24 horas para finalizar tu inscripción.",
         goHome: "Volver al inicio"
       },
       footer: {
@@ -118,7 +118,7 @@ const resources = {
         perMonth: "/month",
         pkgs: {
           essential: {
-            title: "Aura Essentials",
+            title: "She is Fit Essentials",
             desc: "For those looking for a conscious reset.",
             f: ["20 min routines", "Basic nutritional guide", "Community support", "Guided meditations"]
           },
@@ -156,7 +156,7 @@ const resources = {
         submit: "Send Registration",
         disclaimer: "By submitting, you agree to our terms of service and privacy policy.",
         success: "Application received!",
-        successText: "Thank you for trusting AuraFit. We will review your details and contact you within the next 24 hours to finalize your enrollment.",
+        successText: "Thank you for trusting She is Fit. We will review your details and contact you within the next 24 hours to finalize your enrollment.",
         goHome: "Back to home"
       },
       footer: {

@@ -17,7 +17,7 @@ export function Footer() {
               <div className="bg-primary p-2 rounded-full">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <span className="font-headline text-2xl font-bold">Aura<span className="text-primary">Fit</span></span>
+              <span className="font-headline text-2xl font-bold">She is <span className="text-primary">Fit</span></span>
             </Link>
             <p className="text-muted-foreground max-w-sm">
               {t('footer.desc')}
@@ -46,7 +46,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-16 pt-8 border-t border-border/50 text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} AuraFit Coaching. {t('footer.rights')}
+          © {new Date().getFullYear()} She is Fit Coaching. {t('footer.rights')}
         </div>
       </div>
     </footer>
