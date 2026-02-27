@@ -1,0 +1,90 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * CORE PHILOSOPHY
+     * This ruleset enforces a strict user-ownership model for sensitive personal and health data, 
+     * while allowing public access to marketing and service information. The security model 
+     * is designed for high performance by using path-based authorization, avoiding costly 
+     * cross-document lookups.
+     *
+     * DATA STRUCTURE
+     * - /users/{userId}: Private user profiles and health data, keyed by the Firebase Auth UID.
+     * - /packages/{packageId}: Publicly viewable service offerings.
+     * - /resultGalleryItems/{itemId}: Publicly viewable client transformation stories.
+     *
+     * KEY SECURITY DECISIONS
+     * - User Ownership: Access to profile data is strictly tied to the 'userId' in the path 
+     *   matching the authenticated user's 'request.auth.uid'.
+     * - Public Read-Only: Collections related to packages and gallery items are open for 
+     *   read access to all users (including anonymous/unauthenticated) to facilitate 
+     *   onboarding and marketing.
+     * - Write Protection: Writes to public collections are denied at the rules level, 
+     *   assuming these are managed via an administrative backend or the Firebase Console.
+     *
+     * DENORMALIZATION FOR AUTHORIZATION
+     * Ownership is enforced primarily through the document ID (the path). To ensure relational 
+     * integrity, the rules enforce that the internal 'id' field of a user profile must match 
+     * the document's path ID, creating a self-contained authorization unit.
+     */
+
+    // --- Helper Functions ---
+
+    /** Checks if the request is from an authenticated user. */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /** Checks if the authenticated user's UID matches the provided userId. */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /** Checks ownership and ensures the document exists for state-changing operations. */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    // --- Collection Rules ---
+
+    /**
+     * @description Rules for the UserProfile collection. Restricts access to the document owner.
+     * @path /users/{userId}
+     * @allow (get) If the authenticated user's UID is 'abc' and the path is /users/abc.
+     * @deny (list) If a user attempts to query all documents in the /users collection.
+     * @principle Restricts access to a user's own data tree and validates relational integrity.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Rules for the Package collection. Allows public read access for marketing.
+     * @path /packages/{packageId}
+     * @allow (get) Any user, including unauthenticated users, viewing a package detail.
+     * @deny (create) Any user attempting to create a package via the client SDK.
+     * @principle Public Read with Restricted Writes.
+     */
+    match /packages/{packageId} {
+      allow get, list: if true;
+      allow create, update, delete: if false; // TODO: Add administrative roles if package management is required via Client SDK.
+    }
+
+    /**
+     * @description Rules for the ResultGalleryItem collection. Allows public read access.
+     * @path /resultGalleryItems/{galleryItemId}
+     * @allow (list) An anonymous user browsing the transformation gallery.
+     * @deny (delete) A user attempting to remove a gallery item.
+     * @principle Public Read with Restricted Writes.
+     */
+    match /resultGalleryItems/{galleryItemId} {
+      allow get, list: if true;
+      allow create, update, delete: if false; // TODO: Add administrative roles if gallery management is required via Client SDK.
+    }
+  }
+}
