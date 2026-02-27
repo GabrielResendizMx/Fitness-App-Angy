@@ -3,35 +3,55 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Funciones de ayuda
     function isSignedIn() {
       return request.auth != null;
     }
 
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
+    // Regla 2: Rol de admin para la dueña (email específico)
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email == 'info@sheisfit.com';
     }
 
+    // Regla 1: Comparación del UID con el ID del recurso (dueño de la cuenta)
+    function isOwner(userId) {
+      return isSignedIn() && (request.auth.uid == userId || request.auth.uid == resource.id);
+    }
+
+    // Regla 3: Verificar si el usuario tiene status 'active'
+    function isActive() {
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subscriptionStatus == 'active';
+    }
+
+    // Seguridad para perfiles de usuario
     match /users/{userId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
+      // Solo el dueño o el admin pueden leer datos médicos
+      allow get, list: if isOwner(userId) || isAdmin();
+      
+      // Solo el dueño puede crear o actualizar su perfil
       allow create: if isOwner(userId) && request.resource.data.id == userId;
       allow update: if isOwner(userId) && request.resource.data.id == resource.data.id;
+      
+      // Borrado restringido al dueño
       allow delete: if isOwner(userId);
     }
 
+    // Los paquetes son públicos para lectura
     match /packages/{packageId} {
       allow get, list: if true;
-      allow create, update, delete: if false;
+      allow write: if isAdmin();
     }
 
+    // Galería de resultados pública para lectura
     match /resultGalleryItems/{galleryItemId} {
       allow get, list: if true;
-      allow create, update, delete: if false;
+      allow write: if isAdmin();
     }
 
+    // Regla 3: Biblioteca de contenidos restringida a usuarios activos o admins
     match /contentLibrary/{videoId} {
-      allow get, list: if true;
-      allow create, update, delete: if false; // Assuming uploads are managed via server/admin
+      allow get, list: if isActive() || isAdmin();
+      allow write: if isAdmin();
     }
   }
 }
