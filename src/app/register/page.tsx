@@ -2,7 +2,7 @@
 "use client"
 
 import { useState } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { Navbar } from "@/components/aura/Navbar"
 import { Footer } from "@/components/aura/Footer"
 import { Input } from "@/components/ui/input"
@@ -10,20 +10,68 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Sparkles, ArrowLeft } from "lucide-react"
+import { Sparkles, ArrowLeft, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useTranslation } from "react-i18next"
+import { useFirebase } from "@/firebase"
+import { doc, setDoc, serverTimestamp } from "firebase/firestore"
+import { signInAnonymously } from "firebase/auth"
+import { toast } from "@/hooks/use-toast"
 
 export default function RegisterPage() {
   const { t } = useTranslation()
   const searchParams = useSearchParams()
-  const pkg = searchParams.get("pkg") || "essential"
+  const router = useRouter()
+  const { firestore, auth } = useFirebase()
   
+  const pkg = searchParams.get("pkg") || "essential"
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setIsSubmitted(true)
+    if (!firestore || !auth) return
+
+    setIsSubmitting(true)
+    const formData = new FormData(e.currentTarget)
+    
+    try {
+      // 1. Sign in anonymously to get a UID
+      const userCredential = await signInAnonymously(auth)
+      const user = userCredential.user
+
+      // 2. Prepare data for Firestore
+      const userData = {
+        id: user.uid,
+        fullName: formData.get("name") as string,
+        email: formData.get("email") as string,
+        healthProfile: {
+          allergies: formData.get("allergies") as string,
+          injuryHistory: formData.get("injuries") as string,
+        },
+        subscriptionStatus: 'pending',
+        packageId: pkg,
+        createdAt: serverTimestamp(),
+      }
+
+      // 3. Save to Firestore
+      await setDoc(doc(firestore, "users", user.uid), userData)
+      
+      setIsSubmitted(true)
+      toast({
+        title: t('register.success'),
+        description: t('register.successText'),
+      })
+    } catch (error: any) {
+      console.error(error)
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Ocurrió un error al procesar tu registro.",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const pkgDisplayNames: Record<string, string> = {
@@ -69,26 +117,33 @@ export default function RegisterPage() {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="name">{t('register.name')}</Label>
-                    <Input id="name" placeholder={t('register.namePlaceholder')} required className="rounded-xl border-secondary/50 focus:ring-primary h-12" />
+                    <Input name="name" id="name" placeholder={t('register.namePlaceholder')} required className="rounded-xl border-secondary/50 focus:ring-primary h-12" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">{t('register.email')}</Label>
-                    <Input id="email" type="email" placeholder={t('register.emailPlaceholder')} required className="rounded-xl border-secondary/50 focus:ring-primary h-12" />
+                    <Input name="email" id="email" type="email" placeholder={t('register.emailPlaceholder')} required className="rounded-xl border-secondary/50 focus:ring-primary h-12" />
                   </div>
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="allergies">{t('register.allergies')}</Label>
-                  <Textarea id="allergies" placeholder={t('register.allergiesPlaceholder')} className="rounded-xl border-secondary/50 focus:ring-primary min-h-[100px]" />
+                  <Textarea name="allergies" id="allergies" placeholder={t('register.allergiesPlaceholder')} className="rounded-xl border-secondary/50 focus:ring-primary min-h-[100px]" />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="injuries">{t('register.injuries')}</Label>
-                  <Textarea id="injuries" placeholder={t('register.injuriesPlaceholder')} className="rounded-xl border-secondary/50 focus:ring-primary min-h-[100px]" />
+                  <Textarea name="injuries" id="injuries" placeholder={t('register.injuriesPlaceholder')} className="rounded-xl border-secondary/50 focus:ring-primary min-h-[100px]" />
                 </div>
 
                 <div className="pt-4">
-                  <Button type="submit" className="w-full rounded-full bg-primary hover:bg-primary/90 text-white py-8 text-xl font-bold soft-glow transition-all active:scale-95">
+                  <Button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="w-full rounded-full bg-primary hover:bg-primary/90 text-white py-8 text-xl font-bold soft-glow transition-all active:scale-95 disabled:opacity-70"
+                  >
+                    {isSubmitting ? (
+                      <Loader2 className="w-6 h-6 animate-spin mr-2" />
+                    ) : null}
                     {t('register.submit')}
                   </Button>
                 </div>

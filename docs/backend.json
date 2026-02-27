@@ -1,10 +1,11 @@
+
 {
   "entities": {
     "UserProfile": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "UserProfile",
       "type": "object",
-      "description": "Represents a user's profile and their registration details for a service package within the AuraFit application.",
+      "description": "Represents a user's profile and their registration details for a service package within the She is Fit application.",
       "properties": {
         "id": {
           "type": "string",
@@ -19,13 +20,13 @@
           "description": "The email address of the user.",
           "format": "email"
         },
-        "allergies": {
-          "type": "string",
-          "description": "Details about any food allergies the user has. This is part of their health profile."
-        },
-        "injuryHistory": {
-          "type": "string",
-          "description": "Details about the user's past or current injuries. This is part of their health profile."
+        "healthProfile": {
+          "type": "object",
+          "properties": {
+            "allergies": { "type": "string" },
+            "injuryHistory": { "type": "string" }
+          },
+          "required": ["allergies", "injuryHistory"]
         },
         "subscriptionStatus": {
           "type": "string",
@@ -33,7 +34,7 @@
         },
         "packageId": {
           "type": "string",
-          "description": "Reference to the Package the user has registered for. (Relationship: Package 1:N UserProfile)"
+          "description": "Reference to the Package the user has registered for."
         },
         "createdAt": {
           "type": "string",
@@ -45,6 +46,7 @@
         "id",
         "fullName",
         "email",
+        "healthProfile",
         "subscriptionStatus",
         "packageId",
         "createdAt"
@@ -54,101 +56,52 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Package",
       "type": "object",
-      "description": "Defines an exercise package offered by AuraFit, including its details, pricing, and features.",
+      "description": "Defines an exercise package offered by She is Fit.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Package entity."
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the exercise package (e.g., 'Beginner's Boost', 'Advanced Transformation')."
-        },
-        "description": {
-          "type": "string",
-          "description": "A detailed description of what the package includes and its benefits."
-        },
-        "price": {
-          "type": "number",
-          "description": "The monetary cost of the package."
-        },
-        "features": {
-          "type": "array",
-          "description": "A list of key features or benefits included in the package.",
-          "items": {
-            "type": "string"
-          }
-        },
-        "imageUrl": {
-          "type": "string",
-          "description": "URL to an image representing the package for display in UI, especially for floating cards.",
-          "format": "uri"
-        },
-        "isActive": {
-          "type": "boolean",
-          "description": "Indicates if the package is currently available for registration or display."
-        }
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "features": { "type": "array", "items": { "type": "string" } },
+        "imageUrl": { "type": "string", "format": "uri" },
+        "isActive": { "type": "boolean" }
       },
-      "required": [
-        "id",
-        "name",
-        "description",
-        "price",
-        "imageUrl",
-        "isActive"
-      ]
+      "required": ["id", "name", "description", "price", "imageUrl", "isActive"]
     },
     "ResultGalleryItem": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "ResultGalleryItem",
       "type": "object",
-      "description": "Represents a 'Before and After' transformation entry for the Result Gallery section.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the ResultGalleryItem entity."
-        },
-        "clientName": {
-          "type": "string",
-          "description": "The name or pseudonym of the client whose results are displayed."
-        },
-        "beforeImageUrl": {
-          "type": "string",
-          "description": "URL to the 'before' image of the client transformation.",
-          "format": "uri"
-        },
-        "afterImageUrl": {
-          "type": "string",
-          "description": "URL to the 'after' image of the client transformation.",
-          "format": "uri"
-        },
-        "testimonial": {
-          "type": "string",
-          "description": "A brief testimonial or description of the client's journey and results."
-        },
-        "displayOrder": {
-          "type": "number",
-          "description": "An optional number to control the display order of items in the gallery."
-        },
-        "publishedAt": {
-          "type": "string",
-          "description": "Timestamp indicating when this result was published.",
-          "format": "date-time"
-        }
+        "id": { "type": "string" },
+        "clientName": { "type": "string" },
+        "beforeImageUrl": { "type": "string", "format": "uri" },
+        "afterImageUrl": { "type": "string", "format": "uri" },
+        "testimonial": { "type": "string" }
       },
-      "required": [
-        "id",
-        "beforeImageUrl",
-        "afterImageUrl",
-        "testimonial"
-      ]
+      "required": ["id", "beforeImageUrl", "afterImageUrl", "testimonial"]
+    },
+    "ContentLibraryItem": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ContentLibraryItem",
+      "type": "object",
+      "description": "Represents a video content entry in the She is Fit library.",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "videoUrl": { "type": "string", "format": "uri" },
+        "thumbnailUrl": { "type": "string", "format": "uri" },
+        "description": { "type": "string" },
+        "muscleGroups": { "type": "array", "items": { "type": "string" } },
+        "season": { "type": "string", "enum": ["Verano", "Navidad"] },
+        "duration": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "videoUrl", "thumbnailUrl", "description", "muscleGroups", "season", "duration", "createdAt"]
     }
   },
   "auth": {
-    "providers": [
-      "password",
-      "anonymous"
-    ]
+    "providers": ["password", "anonymous"]
   },
   "firestore": {
     "structure": [
@@ -156,51 +109,34 @@
         "path": "/users/{userId}",
         "definition": {
           "entityName": "UserProfile",
-          "schema": {
-            "$ref": "#/backend/entities/UserProfile"
-          },
-          "description": "Stores individual user profiles. Access is strictly restricted to the authenticated user matching the `{userId}`. This includes the `health_profile` map (containing `allergies` and `injuryHistory`) and `subscriptionStatus`. Includes denormalized 'health_profile' map for authorization independence.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the authenticated user, which is also the document ID."
-            }
-          ]
+          "schema": { "$ref": "#/backend/entities/UserProfile" },
+          "description": "Stores individual user profiles."
         }
       },
       {
         "path": "/packages/{packageId}",
         "definition": {
           "entityName": "Package",
-          "schema": {
-            "$ref": "#/backend/entities/Package"
-          },
-          "description": "Stores publicly viewable exercise packages offered by AuraFit. All documents in this collection are publicly readable.",
-          "params": [
-            {
-              "name": "packageId",
-              "description": "The unique identifier for an exercise package."
-            }
-          ]
+          "schema": { "$ref": "#/backend/entities/Package" },
+          "description": "Stores publicly viewable exercise packages."
         }
       },
       {
         "path": "/resultGalleryItems/{galleryItemId}",
         "definition": {
           "entityName": "ResultGalleryItem",
-          "schema": {
-            "$ref": "#/backend/entities/ResultGalleryItem"
-          },
-          "description": "Stores publicly viewable 'Before and After' transformation results for the gallery. All documents in this collection are publicly readable.",
-          "params": [
-            {
-              "name": "galleryItemId",
-              "description": "The unique identifier for a result gallery item."
-            }
-          ]
+          "schema": { "$ref": "#/backend/entities/ResultGalleryItem" },
+          "description": "Stores transformation results."
+        }
+      },
+      {
+        "path": "/contentLibrary/{videoId}",
+        "definition": {
+          "entityName": "ContentLibraryItem",
+          "schema": { "$ref": "#/backend/entities/ContentLibraryItem" },
+          "description": "Library of workout videos and educational content."
         }
       }
-    ],
-    "reasoning": "The recommended Firestore structure is designed to be secure, scalable, and highly debuggable by strictly adhering to the core design principles. It leverages structural segregation and path-based authorization to simplify security rules and ensure Authorization Independence and support for QAPs (Query As Permissions).\n\n1.  **Authorization Independence & Denormalization:**\n    *   **`/users/{userId}`**: Each user's profile is stored in a document whose ID directly corresponds to the authenticated user's UID. This means authorization for a user's profile (`read`, `write`) depends solely on `request.auth.uid == userId` and the document itself. All relevant user-specific data, including the `health_profile` map with `allergies` and `injuryHistory`, `subscriptionStatus`, etc., is contained within this single document. This eliminates the need for `get()` calls in security rules to check parent document attributes or other collection data, thereby maintaining Authorization Independence and supporting atomic operations.\n    *   **`/packages/{packageId}`** and **`/resultGalleryItems/{galleryItemId}`**: These collections contain public, read-only data. Their authorization is inherently independent as they do not rely on user-specific roles or related documents. Any user (authenticated or not) can read them, making their security rules extremely simple (`allow read: true`).\n\n2.  **QAPs (Query As Permissions):**\n    *   **`/users/{userId}`**: For user profiles, `list` operations on the `/users` collection are explicitly disallowed or restricted to very specific, highly privileged roles (e.g., `admin` if such a role were implemented, which would be in a separate `/roles_admin/{uid}` collection). Regular users are expected to fetch their own profile directly using their `uid` (e.g., `doc('users', request.auth.uid)`), which is a secure, direct access pattern. This prevents users from querying the entire collection and inadvertently exposing data, thereby enforcing QAPs by design.\n    *   **`/packages/{packageId}`** and **`/resultGalleryItems/{galleryItemId}`**: For these public collections, `list` operations are explicitly allowed for all users. This is secure because the data contained within is intentionally public information for displaying the application's services and results. The security rule `allow read: true;` for these collections directly supports secure QAPs for listing, as no sensitive data is exposed.\n\n3.  **Structural Segregation:** Each collection (`users`, `packages`, `resultGalleryItems`) is designed to contain documents that share a consistent security posture. `/users/{userId}` documents are private to the owning user. `/packages/{packageId}` and `/resultGalleryItems/{galleryItemId}` documents are publicly readable. This segregation prevents mixing different security requirements within the same collection, making security rules much simpler and easier to audit.\n\n4.  **Access Modeling & Consistency:** Path-based ownership (`/users/{userId}`) is used for private user data, ensuring that the owner's UID is an explicit part of the document's path. Consistent and descriptive wildcards (e.g., `{userId}`, `{packageId}`, `{galleryItemId}`) are used for clarity."
+    ]
   }
 }
