@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Navbar } from "@/components/aura/Navbar"
 import { Footer } from "@/components/aura/Footer"
@@ -10,12 +10,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Sparkles, ArrowLeft, Loader2 } from "lucide-react"
+import { Sparkles, ArrowLeft, Loader2, Lock } from "lucide-react"
 import Link from "next/link"
 import { useTranslation } from "react-i18next"
 import { useFirebase } from "@/firebase"
 import { doc, setDoc, serverTimestamp } from "firebase/firestore"
-import { signInAnonymously } from "firebase/auth"
+import { createUserWithEmailAndPassword } from "firebase/auth"
 import { toast } from "@/hooks/use-toast"
 
 export default function RegisterPage() {
@@ -26,48 +26,81 @@ export default function RegisterPage() {
   
   const pkg = searchParams.get("pkg") || "essential"
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [registrationSuccess, setRegistrationSuccess] = useState(false)
+
+  // Redirección a Stripe después del registro exitoso
+  useEffect(() => {
+    if (registrationSuccess) {
+      const timer = setTimeout(() => {
+        // En un entorno real, aquí irías a tu checkout de Stripe
+        // router.push('https://checkout.stripe.com/...')
+        console.log("Redirecting to Stripe checkout...");
+        toast({
+          title: t('register.redirecting'),
+          description: t('register.stripeNotice'),
+        })
+      }, 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [registrationSuccess, router, t])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!firestore || !auth) return
 
-    setIsSubmitting(true)
     const formData = new FormData(e.currentTarget)
+    const email = formData.get("email") as string
+    const password = formData.get("password") as string
+    const confirmPassword = formData.get("confirmPassword") as string
+
+    if (password !== confirmPassword) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: t('register.passwordMismatch'),
+      })
+      return
+    }
+
+    setIsSubmitting(true)
     
     try {
-      // 1. Sign in anonymously to get a UID
-      const userCredential = await signInAnonymously(auth)
+      // 1. Crear usuario en Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
       const user = userCredential.user
 
-      // 2. Prepare data for Firestore
+      // 2. Estructurar documento para Firestore (siguiendo backend.json)
       const userData = {
         id: user.uid,
         fullName: formData.get("name") as string,
-        email: formData.get("email") as string,
+        email: email,
         healthProfile: {
           allergies: formData.get("allergies") as string,
           injuryHistory: formData.get("injuries") as string,
         },
-        subscriptionStatus: 'pending',
+        subscriptionStatus: 'pending_payment',
         packageId: pkg,
         createdAt: serverTimestamp(),
       }
 
-      // 3. Save to Firestore
+      // 3. Guardar en Firestore usando el UID como ID de documento
       await setDoc(doc(firestore, "users", user.uid), userData)
       
-      setIsSubmitted(true)
+      setRegistrationSuccess(true)
       toast({
         title: t('register.success'),
         description: t('register.successText'),
       })
     } catch (error: any) {
       console.error(error)
+      let errorMessage = error.message
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = t('register.emailInUse')
+      }
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "Ocurrió un error al procesar tu registro.",
+        description: errorMessage,
       })
     } finally {
       setIsSubmitting(false)
@@ -99,18 +132,15 @@ export default function RegisterPage() {
           </CardHeader>
           
           <CardContent className="p-10">
-            {isSubmitted ? (
+            {registrationSuccess ? (
               <div className="text-center py-12 space-y-6 animate-in zoom-in duration-500">
                 <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Sparkles className="w-10 h-10" />
+                  <Loader2 className="w-10 h-10 animate-spin" />
                 </div>
-                <h3 className="text-3xl font-bold">{t('register.success')}</h3>
+                <h3 className="text-3xl font-bold">{t('register.processing')}</h3>
                 <p className="text-muted-foreground text-lg">
-                  {t('register.successText')}
+                  {t('register.redirectingText')}
                 </p>
-                <Button asChild className="rounded-full px-8 py-6">
-                  <Link href="/">{t('register.goHome')}</Link>
-                </Button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-8">
@@ -122,6 +152,23 @@ export default function RegisterPage() {
                   <div className="space-y-2">
                     <Label htmlFor="email">{t('register.email')}</Label>
                     <Input name="email" id="email" type="email" placeholder={t('register.emailPlaceholder')} required className="rounded-xl border-secondary/50 focus:ring-primary h-12" />
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="password">{t('register.password')}</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3.5 w-4 h-4 text-muted-foreground" />
+                      <Input name="password" id="password" type="password" required className="rounded-xl border-secondary/50 focus:ring-primary h-12 pl-10" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword">{t('register.confirmPassword')}</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3.5 w-4 h-4 text-muted-foreground" />
+                      <Input name="confirmPassword" id="confirmPassword" type="password" required className="rounded-xl border-secondary/50 focus:ring-primary h-12 pl-10" />
+                    </div>
                   </div>
                 </div>
                 
