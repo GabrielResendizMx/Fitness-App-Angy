@@ -16,7 +16,9 @@ const resources = {
       },
       hero: {
         subtitle: "Siente tu Aura",
-        title: "Encuentra tu equilibrio y brilla con fuerza",
+        titlePart1: "Encuentra tu equilibrio",
+        titleHighlight: "y brilla",
+        titlePart2: "con fuerza",
         description: "Un enfoque holístico para transformar tu cuerpo y mente. Programas personalizados diseñados para tu bienestar integral.",
         cta1: "Explorar Programas",
         cta2: "Saber más"
@@ -98,7 +100,9 @@ const resources = {
       },
       hero: {
         subtitle: "Feel your Aura",
-        title: "Find your balance and shine with strength",
+        titlePart1: "Find your balance",
+        titleHighlight: "and shine",
+        titlePart2: "with strength",
         description: "A holistic approach to transform your body and mind. Personalized programs designed for your integral well-being.",
         cta1: "Explore Programs",
         cta2: "Learn More"

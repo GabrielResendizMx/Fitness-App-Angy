@@ -18,8 +18,8 @@ export function Hero() {
         <div className="space-y-8 animate-in fade-in slide-in-from-left duration-1000">
           <p className="font-decorative text-3xl text-primary">{t('hero.subtitle')}</p>
           <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-            {t('hero.title').split('brilla')[0]} <br />
-            <span className="text-primary italic">{t('hero.title').split('fuerza')[0].split('brilla')[1] || 'y brilla'}</span> {t('hero.title').split('brilla')[1]?.split('fuerza')[1] || 'con fuerza'}
+            {t('hero.titlePart1')} <br />
+            <span className="text-primary italic">{t('hero.titleHighlight')}</span> {t('hero.titlePart2')}
           </h1>
           <p className="text-lg text-muted-foreground max-w-lg leading-relaxed">
             {t('hero.description')}
