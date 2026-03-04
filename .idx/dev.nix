@@ -7,6 +7,7 @@
   packages = [
     pkgs.nodejs_20
     pkgs.zulu
+    pkgs.flutter
   ];
   # Sets environment variables in the workspace
   env = {};

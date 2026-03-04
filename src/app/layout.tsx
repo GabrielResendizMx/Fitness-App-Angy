@@ -6,6 +6,10 @@ import './globals.css';
 import '@/i18n/config';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n/config';
+import { FirebaseProvider } from '@/firebase/provider';
+import { initializeFirebase } from '@/firebase';
+
+const { firebaseApp, auth, firestore } = initializeFirebase();
 
 export default function RootLayout({
   children,
@@ -22,7 +26,9 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased bg-background">
         <I18nextProvider i18n={i18n}>
-          {children}
+          <FirebaseProvider firebaseApp={firebaseApp} auth={auth} firestore={firestore}>
+            {children}
+          </FirebaseProvider>
         </I18nextProvider>
       </body>
     </html>
