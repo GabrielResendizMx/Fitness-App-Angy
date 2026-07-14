@@ -1,0 +1,9 @@
+{
+  "dart.analysisExcludedFolders": [
+    "SDK Flutter"
+  ],
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "Dart-Code.dart-code"
+  }
+}
